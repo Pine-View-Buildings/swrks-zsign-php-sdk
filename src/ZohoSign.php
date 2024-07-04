@@ -807,6 +807,33 @@ abstract class ZohoSign{
 		return new RequestObject ( $response->requests  );
 	}
 
+	public static function mergeSend( $templateObj, $quick_send=true, $template_ids=array() ){
+		
+		$templateId   = $templateObj->getTemplateId();
+
+		if( !isset($templateId) ){
+			throw new SignException("Template Id not set", -1);
+		}
+
+		$data["templates"] = $templateObj->constructJsonForSubmit();
+
+		$payload = array( 
+			"data" 			=> json_encode( $data ),
+			"is_quicksend"	=> $quick_send ? 'true' : 'false' ,
+			"template_ids"	=> json_encode( $template_ids ),
+			"testing"	=>	self::$testing?'true':'false',
+		);
+
+		$response = ApiClient::callSignAPI(
+			"/api/v1/templates/mergesend", 	// api
+			ApiClient::POST, 									// post
+			null, 												// queryparams
+			$payload 											// post data
+		);
+
+		return new RequestObject ( $response->requests  );
+	}
+
 	/*
 	// Expermental Function for future use
 	public static function sendTemplateUsingJson( $templateId, $jsonArr, $quick_send=true ){
