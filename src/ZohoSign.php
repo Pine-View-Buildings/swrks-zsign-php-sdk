@@ -781,6 +781,17 @@ abstract class ZohoSign{
 		return new TemplateObject( $response->templates );
 	}
 
+	public static function getMergeTemplate( $templateIds ) {
+		$response = ApiClient::callSignAPI(
+			"/api/v1/templates/mergeview",
+			ApiClient::POST,						
+			null,
+			[ 'template_ids' => json_encode( $templateIds ) ]
+		);
+
+		return new TemplateObject( $response->templates );
+	}
+
 	public static function sendTemplate( $templateObj, $quick_send=true ){
 		
 		$templateId   = $templateObj->getTemplateId();
