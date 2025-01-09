@@ -239,8 +239,34 @@ class Fields
  
 	public function setRadioGroups($radio_groups){
 		$this->radio_groups = $radio_groups;
-	} 
- 
+	}
+
+	public function trimNumber( $number, $max = 10 ) {
+		$str = (string) $number;
+		if ( strlen( $str ) > $max ) {
+			$str = substr( $str, 0, $max );
+		}
+		if ( str_ends_with( $str, '.') ) {
+			$str = substr( $str, 0, -1 );
+		}
+		return $str;
+	}
+
+	public function sanitizeOutput( $output ) {
+		foreach ( $output as $field_group => $fields ) {
+			foreach ( $fields as $index => $field ) {
+				// trim numbers down to 10 digits or less (otherwise Zoho Sign will reject the request)
+				$output[ $field_group ][ $index ]['x_coord'] = $this->trimNumber( $field['x_coord'] );
+				$output[ $field_group ][ $index ]['y_coord'] = $this->trimNumber( $field['y_coord'] );
+				$output[ $field_group ][ $index ]['x_value'] = $this->trimNumber( $field['x_value'] );
+				$output[ $field_group ][ $index ]['y_value'] = $this->trimNumber( $field['y_value'] );
+				$output[ $field_group ][ $index ]['width']   = $this->trimNumber( $field['width'] );
+				$output[ $field_group ][ $index ]['height']  = $this->trimNumber( $field['height'] );
+			}
+		}
+
+		return $output;
+	}
  
 	public function constructJson()
 	{
@@ -299,8 +325,9 @@ class Fields
 		}
 		$response["radio_groups"]= count($radio_groupsArr)!=0 ? $radio_groupsArr : NULL ;		
 		
+		$output = array_filter( $response, function($v) { return !is_null($v); } );
 
-		return array_filter( $response, function($v) { return !is_null($v); } );
+		return $this->sanitizeOutput( $output );
 	}
 }
 ?>
