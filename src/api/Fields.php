@@ -241,7 +241,7 @@ class Fields
 		$this->radio_groups = $radio_groups;
 	}
 
-	public function trimNumber( $number, $max = 10 ) {
+	public function trimNumber( $number, $max = 9 ) {
 		$str = (string) $number;
 		if ( strlen( $str ) > $max ) {
 			$str = substr( $str, 0, $max );
@@ -255,13 +255,15 @@ class Fields
 	public function sanitizeOutput( $output ) {
 		foreach ( $output as $field_group => $fields ) {
 			foreach ( $fields as $index => $field ) {
-				// trim numbers down to 10 digits or less (otherwise Zoho Sign will reject the request)
-				$output[ $field_group ][ $index ]['x_coord'] = $this->trimNumber( $field['x_coord'] );
-				$output[ $field_group ][ $index ]['y_coord'] = $this->trimNumber( $field['y_coord'] );
-				$output[ $field_group ][ $index ]['x_value'] = $this->trimNumber( $field['x_value'] );
-				$output[ $field_group ][ $index ]['y_value'] = $this->trimNumber( $field['y_value'] );
-				$output[ $field_group ][ $index ]['width']   = $this->trimNumber( $field['width'] );
-				$output[ $field_group ][ $index ]['height']  = $this->trimNumber( $field['height'] );
+				// trim numbers down to under 10 digits (otherwise Zoho Sign will reject the request)
+				$output[ $field_group ][ $index ]['x_coord']    = $this->trimNumber( $field['x_coord'] );
+				$output[ $field_group ][ $index ]['y_coord']    = $this->trimNumber( $field['y_coord'] );
+				$output[ $field_group ][ $index ]['x_value']    = $this->trimNumber( $field['x_value'] );
+				$output[ $field_group ][ $index ]['y_value']    = $this->trimNumber( $field['y_value'] );
+				$output[ $field_group ][ $index ]['width']      = $this->trimNumber( $field['width'] );
+				$output[ $field_group ][ $index ]['height']     = $this->trimNumber( $field['height'] );
+				$output[ $field_group ][ $index ]['abs_width']  = $this->trimNumber( $field['abs_width'] );
+				$output[ $field_group ][ $index ]['abs_height'] = $this->trimNumber( $field['abs_height'] );
 			}
 		}
 
